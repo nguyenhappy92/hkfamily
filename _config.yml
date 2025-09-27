@@ -1,0 +1,31 @@
+name: HK Family Website
+description: Website gia đình HK Family - Nơi chia sẻ tình yêu và kỷ niệm
+url: https://nguyenhappy92.github.io/hkfamily
+baseurl: /hkfamily
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+# Plugins
+plugins:
+  - jekyll-sitemap
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# SEO settings
+title: HK Family - Gia đình hạnh phúc
+author: HK Family
+tagline: Website chính thức của gia đình HK Family. Chia sẻ những khoảnh khắc đẹp, kỷ niệm và câu chuyện của chúng tôi.
+keywords: gia đình, HK Family, family website, kỷ niệm gia đình
+
+# Social media
+social:
+  facebook: https://facebook.com/hkfamily
+  instagram: https://instagram.com/hkfamily
+  
+# Contact
+email: hkfamily@gmail.com
+phone: +84 xxx xxx xxx
+address: Việt Nam
