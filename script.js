@@ -65,7 +65,7 @@ const observer = new IntersectionObserver(function(entries) {
 
 // Observe elements for animation
 document.addEventListener('DOMContentLoaded', function() {
-    const animatedElements = document.querySelectorAll('.member-card, .gallery-item, .timeline-item, .contact-item');
+    const animatedElements = document.querySelectorAll('.member-card, .gallery-item, .contact-item');
     
     animatedElements.forEach((el, index) => {
         el.style.opacity = '0';
@@ -73,7 +73,33 @@ document.addEventListener('DOMContentLoaded', function() {
         el.style.transition = `all 0.6s ease ${index * 0.1}s`;
         observer.observe(el);
     });
+
+    // Special animation for timeline items
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    timelineItems.forEach((item, index) => {
+        const content = item.querySelector('.timeline-content');
+        if (content) {
+            // Initial state is set by CSS
+            timelineObserver.observe(item);
+        }
+    });
 });
+
+// Timeline animation observer
+const timelineObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            if (entry.target.classList.contains('timeline-item')) {
+                const content = entry.target.querySelector('.timeline-content');
+                if (content) {
+                    setTimeout(() => {
+                        content.classList.add('animate');
+                    }, 200);
+                }
+            }
+        }
+    });
+}, observerOptions);
 
 // Gallery Item Click Effect
 document.querySelectorAll('.gallery-item').forEach(item => {
@@ -144,6 +170,11 @@ const statsObserver = new IntersectionObserver(function(entries) {
         if (entry.isIntersecting) {
             const statNumbers = entry.target.querySelectorAll('.stat-number');
             statNumbers.forEach(stat => {
+                // Skip animation for months-married as it's updated separately
+                if (stat.id === 'months-married') {
+                    return;
+                }
+                
                 const target = stat.textContent === '∞' ? Infinity : parseInt(stat.textContent);
                 if (target !== Infinity) {
                     stat.textContent = '0';
@@ -252,4 +283,115 @@ window.addEventListener('load', function() {
     const heroTitle = document.querySelector('.hero-title');
     const originalText = heroTitle.textContent;
     typeWriter(heroTitle, originalText, 80);
+});
+
+// Auto-calculate months since wedding
+function calculateMonthsMarried() {
+    const weddingDate = new Date('2025-02-15'); // 15/2/2025
+    const currentDate = new Date();
+    
+    // Calculate difference in months
+    let months = (currentDate.getFullYear() - weddingDate.getFullYear()) * 12;
+    months += currentDate.getMonth() - weddingDate.getMonth();
+    
+    // If current day is before wedding day in the month, subtract 1
+    if (currentDate.getDate() < weddingDate.getDate()) {
+        months--;
+    }
+    
+    // Ensure minimum of 0 months
+    months = Math.max(0, months);
+    
+    return months;
+}
+
+// Update months married display with smart year/month conversion
+function updateMonthsMarried() {
+    const monthsElement = document.getElementById('months-married');
+    const labelElement = document.getElementById('marriage-label');
+    
+    if (monthsElement && labelElement) {
+        const totalMonths = calculateMonthsMarried();
+        const weddingDate = new Date('2025-02-15');
+        const currentDate = new Date();
+        
+        // Calculate days for more precise info
+        const timeDiff = currentDate.getTime() - weddingDate.getTime();
+        const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+        
+        // Smart display logic
+        let displayNumber, displayLabel, tooltipExtra = '';
+        
+        if (totalMonths >= 12) {
+            // 12+ months: Switch to years and change label
+            if (totalMonths >= 24) {
+                // 2+ years: Show decimal years
+                const years = (totalMonths / 12).toFixed(1);
+                displayNumber = years;
+                tooltipExtra = `(${totalMonths} tháng)`;
+            } else {
+                // 12-23 months: Show years with decimal
+                const years = Math.floor(totalMonths / 12);
+                const remainingMonths = totalMonths % 12;
+                
+                if (remainingMonths === 0) {
+                    displayNumber = years;
+                } else {
+                    displayNumber = `${years}.${remainingMonths}`;
+                    tooltipExtra = `(${totalMonths} tháng)`;
+                }
+            }
+            displayLabel = 'Năm hạnh phúc';
+        } else {
+            // Less than 12 months: Show months
+            displayNumber = totalMonths;
+            displayLabel = 'Tháng kết hôn';
+        }
+        
+        // Update display
+        monthsElement.textContent = displayNumber;
+        labelElement.textContent = displayLabel;
+        
+        // Add data attribute for styling
+        if (totalMonths >= 12) {
+            monthsElement.setAttribute('data-type', 'years');
+        } else {
+            monthsElement.removeAttribute('data-type');
+        }
+        
+        // Add/update tooltip with detailed info
+        const statItem = monthsElement.closest('.stat-item');
+        if (statItem && !statItem.querySelector('.marriage-tooltip')) {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'marriage-tooltip';
+            tooltip.innerHTML = `
+                <small>Kết hôn: 15/2/2025<br>
+                ${daysDiff} ngày hạnh phúc ${tooltipExtra}</small>
+            `;
+            statItem.appendChild(tooltip);
+        } else if (statItem) {
+            const tooltip = statItem.querySelector('.marriage-tooltip');
+            if (tooltip) {
+                tooltip.innerHTML = `
+                    <small>Kết hôn: 15/2/2025<br>
+                    ${daysDiff} ngày hạnh phúc ${tooltipExtra}</small>
+                `;
+            }
+        }
+    }
+}
+
+// Update on page load and every day
+document.addEventListener('DOMContentLoaded', function() {
+    updateMonthsMarried();
+    
+    // Update every 24 hours (86400000 milliseconds)
+    setInterval(updateMonthsMarried, 86400000);
+});
+
+// Also update when page becomes visible (user switches back to tab)
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        updateMonthsMarried();
+    }
 });

@@ -261,12 +261,62 @@ body {
     font-weight: 700;
     color: #ff6b6b;
     margin-bottom: 0.5rem;
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Special styling for decimal years */
+.stat-number[data-type="years"] {
+    font-size: 2.2rem;
+    letter-spacing: -1px;
 }
 
 .stat-label {
     font-size: 0.9rem;
     color: #666;
     font-weight: 500;
+}
+
+.stat-item {
+    position: relative;
+}
+
+.marriage-tooltip {
+    position: absolute;
+    bottom: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.marriage-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid rgba(0, 0, 0, 0.8);
+}
+
+.stat-item:hover .marriage-tooltip {
+    opacity: 1;
+}
+
+.marriage-tooltip small {
+    line-height: 1.4;
 }
 
 .about-image {
@@ -453,28 +503,56 @@ body {
 
 .timeline-item {
     position: relative;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
 }
 
 .timeline-item:nth-child(odd) .timeline-content {
     left: 0;
     text-align: right;
-    padding-right: 2rem;
+    padding-right: 3rem;
 }
 
 .timeline-item:nth-child(even) .timeline-content {
     right: 0;
     text-align: left;
-    padding-left: 2rem;
+    padding-left: 3rem;
 }
 
 .timeline-content {
-    position: relative;
+    position: absolute;
     width: 45%;
     background: white;
     padding: 2rem;
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    top: 0;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.timeline-content.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+    transform: translateX(-30px) translateY(30px);
+}
+
+.timeline-item:nth-child(odd) .timeline-content.animate {
+    transform: translateX(0) translateY(0);
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+    transform: translateX(30px) translateY(30px);
+}
+
+.timeline-item:nth-child(even) .timeline-content.animate {
+    transform: translateX(0) translateY(0);
 }
 
 .timeline-content::before {
@@ -539,6 +617,59 @@ body {
 .timeline-item.future .timeline-content::before {
     background: #6c757d;
     box-shadow: 0 0 0 4px white, 0 0 0 8px #6c757d;
+}
+
+/* Special styling for wedding milestone */
+.timeline-item:nth-child(2) .timeline-content {
+    background: linear-gradient(135deg, #fff5f5, #ffe5e5);
+    border: 2px solid #ff6b6b;
+    box-shadow: 0 15px 35px rgba(255, 107, 107, 0.2);
+}
+
+.timeline-item:nth-child(2) .timeline-year {
+    background: linear-gradient(45deg, #ff6b6b, #ffa500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.timeline-item:nth-child(2) .timeline-content h3 {
+    color: #ff6b6b;
+    font-size: 1.4rem;
+}
+
+.timeline-item:nth-child(2) .timeline-content::before {
+    background: linear-gradient(45deg, #ff6b6b, #ffa500);
+    width: 24px;
+    height: 24px;
+    box-shadow: 0 0 0 4px white, 0 0 0 8px #ff6b6b;
+}
+
+/* Special styling for house purchase milestone */
+.timeline-item:nth-child(3) .timeline-content {
+    background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
+    border: 2px solid #4facfe;
+    box-shadow: 0 15px 35px rgba(79, 172, 254, 0.2);
+}
+
+.timeline-item:nth-child(3) .timeline-year {
+    color: #4facfe;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.timeline-item:nth-child(3) .timeline-content h3 {
+    color: #2196F3;
+    font-size: 1.3rem;
+}
+
+.timeline-item:nth-child(3) .timeline-content::before {
+    background: linear-gradient(45deg, #4facfe, #00f2fe);
+    width: 22px;
+    height: 22px;
+    box-shadow: 0 0 0 4px white, 0 0 0 8px #4facfe;
 }
 
 /* Map Section */
@@ -909,26 +1040,23 @@ body {
         left: 20px;
     }
 
-    .timeline-item:nth-child(odd) .timeline-content {
-        left: 60px;
-        text-align: left;
-        padding-left: 2rem;
-        padding-right: 0;
+    .timeline-item {
+        min-height: auto;
     }
 
+    .timeline-item:nth-child(odd) .timeline-content,
     .timeline-item:nth-child(even) .timeline-content {
+        position: relative;
         left: 60px;
+        right: auto;
         text-align: left;
-        padding-left: 2rem;
-        padding-right: 0;
-    }
-
-    .timeline-content {
+        padding: 1.5rem;
         width: calc(100% - 80px);
     }
 
     .timeline-content::before {
         left: -45px !important;
+        right: auto !important;
     }
 
     .footer-content {
