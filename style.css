@@ -363,6 +363,30 @@ body {
     line-height: 1.6;
 }
 
+.member-card.coming-soon {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: 2px dashed #dee2e6;
+    opacity: 0.8;
+}
+
+.member-card.coming-soon .member-avatar {
+    background: linear-gradient(135deg, #ced4da, #adb5bd);
+}
+
+.member-card.coming-soon h3 {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.member-card.coming-soon .member-role {
+    color: #adb5bd;
+}
+
+.member-card.coming-soon .member-desc {
+    color: #6c757d;
+    font-style: italic;
+}
+
 /* Gallery Section */
 .gallery {
     padding: 100px 0;
@@ -490,6 +514,31 @@ body {
 .timeline-content p {
     color: #666;
     line-height: 1.6;
+}
+
+.timeline-item.future .timeline-content {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: 2px dashed #dee2e6;
+    opacity: 0.9;
+}
+
+.timeline-item.future .timeline-year {
+    color: #6c757d;
+}
+
+.timeline-item.future .timeline-content h3 {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.timeline-item.future .timeline-content p {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.timeline-item.future .timeline-content::before {
+    background: #6c757d;
+    box-shadow: 0 0 0 4px white, 0 0 0 8px #6c757d;
 }
 
 /* Map Section */
